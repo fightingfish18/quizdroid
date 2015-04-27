@@ -2,8 +2,9 @@ package edu.washington.wsmay1.quizdroid;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.*;
+import android.widget.*;
+import android.content.Intent;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -12,6 +13,19 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Button math = (Button) findViewById(R.id.math);
+        Button physics = (Button) findViewById(R.id.physics);
+        Button marvel = (Button) findViewById(R.id.marvel);
+
+        View.OnClickListener buttonPush = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleButton(v.getId());
+            }
+        };
+        math.setOnClickListener(buttonPush);
+        physics.setOnClickListener(buttonPush);
+        marvel.setOnClickListener(buttonPush);
     }
 
 
@@ -35,5 +49,11 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void handleButton(int id) {
+        Intent intent = new Intent(this, subjectOverview.class);
+        intent.putExtra("subject", id);
+        startActivity(intent);
     }
 }

@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Quiz Droid</string>
-
+    <string name="math">Math</string>
+    <string name="physics">Physics</string>
+    <string name="marvel">Marvel Super Heroes</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_math_quiz">mathQuiz</string>
+    <string name="title_activity_subject_overview">subjectOverview</string>
 </resources>
