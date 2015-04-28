@@ -8,4 +8,5 @@
     <string name="title_activity_math_quiz">mathQuiz</string>
     <string name="title_activity_subject_overview">subjectOverview</string>
     <string name="title_activity_quiz">Quiz</string>
+    <string name="title_activity_summary">Summary</string>
 </resources>
