@@ -24,6 +24,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.washington.wsmay1.quizdroid.MainActivity" />
         </activity>
+        <activity
+            android:name=".Quiz"
+            android:label="@string/title_activity_quiz" >
+        </activity>
     </application>
 
 </manifest>

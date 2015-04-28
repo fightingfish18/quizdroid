@@ -33,9 +33,10 @@
         android:layout_height="75dp"
         android:text="Begin"
         android:id="@+id/start"
-        android:layout_marginBottom="81dp"
+        android:layout_marginBottom="49dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:layout_width="wrap_content"
