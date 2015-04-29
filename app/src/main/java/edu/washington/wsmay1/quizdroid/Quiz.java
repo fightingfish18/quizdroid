@@ -13,6 +13,9 @@ public class Quiz extends ActionBarActivity {
     private int answer;
     private int qNum;
     private int totalCorrect;
+    private String selectedAnswer;
+    private String correctAnswer;
+    private ArrayList<Question> questions;
     ArrayList<RadioButton> buttons = new ArrayList<RadioButton>();
 
     @Override
@@ -21,16 +24,16 @@ public class Quiz extends ActionBarActivity {
         setContentView(R.layout.activity_quiz);
         Intent data = getIntent();
         Bundle questionData = data.getExtras();
-        final ArrayList<Question> questionList = (ArrayList<Question>) questionData.getSerializable("questions");
+        this.questions = (ArrayList<Question>) questionData.getSerializable("questions");
         qNum = data.getIntExtra("current", 0);
         totalCorrect = data.getIntExtra("correct", 0);
 
-        makeQuestion(questionList.get(qNum));
+        makeQuestion(questions.get(qNum));
         Button submit = (Button) findViewById(R.id.submit);
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                submitQuestion(questionList);
+                submitQuestion();
             }
         });
     }
@@ -69,23 +72,31 @@ public class Quiz extends ActionBarActivity {
         }
     }
 
-    public void submitQuestion(ArrayList<Question> questions) {
+    public void submitQuestion() {
         boolean selected = false;
         for (int i = 0; i < buttons.size(); i++) {
-            if (buttons.get(i).isSelected()) {
+            if (buttons.get(i).isChecked()) {
                 selected = true;
+                this.selectedAnswer = buttons.get(i).getText().toString();
                 if (i == this.answer) {
                     this.totalCorrect++;
-                    break;
                 }
             }
+            if (i == this.answer) {
+                this.correctAnswer = buttons.get(i).getText().toString();
+            }
         }
-        this.qNum++;
-        Intent intent = new Intent(this, Summary.class);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("questions", questions);
-        intent.putExtra("current", this.qNum);
-        intent.putExtra("correct", this.totalCorrect);
-        startActivity(intent);
+        if (selected) {
+            this.qNum++;
+            Intent intent = new Intent(this, Summary.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("questions", this.questions);
+            intent.putExtra("current", this.qNum);
+            intent.putExtra("correct", this.totalCorrect);
+            intent.putExtra("selectedOption", this.selectedAnswer);
+            intent.putExtra("correctOption", this.correctAnswer);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
     }
 }

@@ -76,12 +76,64 @@ public class subjectOverview extends ActionBarActivity {
 
     public void createQuiz(String selected) {
         ArrayList<String> choices = new ArrayList<String>();
-        choices.add("1");
-        choices.add("3");
-        choices.add("5");
-        choices.add("2");
-        Question one = new Question("What is 1 + 1", choices, 3);
-        quizQuestions.add(one);
+        if (selected.equals("Math")) {
+            choices.add("1");
+            choices.add("3");
+            choices.add("5");
+            choices.add("2");
+            Question one = new Question("What is 1 + 1?", choices, 3);
+            choices.clear();
+            choices.add("10");
+            choices.add("20");
+            choices.add("100");
+            choices.add("45");
+            Question two = new Question("What is 10 x 10?", choices, 2);
+            choices.clear();
+            choices.add("25");
+            choices.add("30");
+            choices.add("67");
+            choices.add("10");
+            Question three = new Question("Find x.  X + 5 = 30", choices, 0);
+            quizQuestions.add(one);
+            quizQuestions.add(two);
+            quizQuestions.add(three);
+        } else if (selected.equals("Physics")) {
+            choices.add("e=mc^2");
+            choices.add("9.8ms/s");
+            choices.add("y = mx + b");
+            choices.add("F = ma");
+            Question one = new Question("What is the equation for calculating Force?", choices, 3);
+            choices.clear();
+            choices.add("Nikola Tesla");
+            choices.add("Galileo");
+            choices.add("Sir. Isaac Newton");
+            choices.add("Albert Einstein");
+            Question two = new Question("Who pioneered the theory of gravity?", choices, 1);
+            quizQuestions.add(one);
+            quizQuestions.add(two);
+        } else {
+            choices.add("The Brotherhood");
+            choices.add("The X-Men");
+            choices.add("The Disciples");
+            choices.add("New Age");
+            Question one = new Question("What do the mutants who follow Magneto call themselves?", choices, 0);
+            choices.clear();
+            choices.add("Clark Kent");
+            choices.add("Lex Luthor");
+            choices.add("Peter Parker");
+            choices.add("Xavier Kent");
+            Question two = new Question("What is Spider Man's real name?", choices, 2);
+            choices.clear();
+            choices.add("The Last Stand");
+            choices.add("Age of Ultron");
+            choices.add("Apocalypse");
+            choices.add("The Winter Soldier");
+            Question three = new Question("What is the title of the second Avengers movie?", choices, 1);
+            quizQuestions.add(one);
+            quizQuestions.add(two);
+            quizQuestions.add(three);
+        }
+        numQuestions(quizQuestions.size());
     }
     public void beginQuiz() {
         Intent intent = new Intent(this, Quiz.class);
@@ -91,5 +143,11 @@ public class subjectOverview extends ActionBarActivity {
         intent.putExtras(bundle);
         intent.putExtra("current", 0);
         startActivity(intent);
+    }
+
+    public void numQuestions(int num) {
+        TextView totalNum = (TextView) findViewById(R.id.textView);
+        String text = totalNum.getText().toString();
+        totalNum.setText(text + " " + num);
     }
 }
