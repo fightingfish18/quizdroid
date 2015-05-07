@@ -1,59 +1,110 @@
 package edu.washington.wsmay1.quizdroid;
 
-import android.support.v7.app.ActionBarActivity;
+import android.app.Activity;
+import android.app.FragmentManager;
+import android.net.Uri;
 import android.os.Bundle;
-import android.view.*;
-import android.widget.*;
-import android.content.Intent;
-import java.util.*;
+import android.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+
+import java.util.ArrayList;
 
 
-public class subjectOverview extends ActionBarActivity {
+/**
+ * A simple {@link Fragment} subclass.
+ * Activities that contain this fragment must implement the
+ * {@link subjectOverviewFragment.OnFragmentInteractionListener} interface
+ * to handle interaction events.
+ * Use the {@link subjectOverviewFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+public class subjectOverviewFragment extends Fragment {
+
+    private int activityId;
+    private OnFragmentInteractionListener mListener;
     private String selected;
     private ArrayList<Question> quizQuestions = new ArrayList<Question>();
 
+
+    public static subjectOverviewFragment newInstance(String param1, String param2) {
+        subjectOverviewFragment fragment = new subjectOverviewFragment();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public subjectOverviewFragment() {
+        // Required empty public constructor
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_subject_overview);
-        Intent selection = getIntent();
-        int activityId = selection.getIntExtra("subject", 0);
-        populateView(activityId);
-        Button begin = (Button) findViewById(R.id.start);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        this.activityId = ((FragmentQuiz)getActivity()).getActivityId();
+        View v = inflater.inflate(R.layout.fragment_subject_overview, container, false);
+        Button begin = (Button) v.findViewById(R.id.start);
+        v = populateView(this.activityId, v);
+        createQuiz(selected);
+        numQuestions(this.quizQuestions.size(), (TextView) v.findViewById(R.id.textView));
         begin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 beginQuiz();
             }
         });
+        return v;
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_subject_overview, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+    // TODO: Rename method, update argument and hook method into UI event
+    public void onButtonPressed(Uri uri) {
+        if (mListener != null) {
+            mListener.onFragmentInteraction(uri);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
-    public void populateView(int activityId) {
-        TextView title = (TextView) findViewById(R.id.title);
-        TextView overview = (TextView) findViewById(R.id.overview);
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+       /* try {
+            mListener = (OnFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        } */
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p/>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        public void onFragmentInteraction(Uri uri);
+    }
+
+    public View populateView(int activityId, View v) {
+        TextView title = (TextView) v.findViewById(R.id.title);
+        TextView overview = (TextView) v.findViewById(R.id.overview);
         switch(activityId) {
             case(R.id.math):
                 title.setText("Math Quiz");
@@ -71,7 +122,8 @@ public class subjectOverview extends ActionBarActivity {
                 selected = "Marvel";
                 break;
         }
-        createQuiz(selected);
+        return v;
+        //createQuiz(selected);
     }
 
     public void createQuiz(String selected) {
@@ -133,21 +185,17 @@ public class subjectOverview extends ActionBarActivity {
             quizQuestions.add(two);
             quizQuestions.add(three);
         }
-        numQuestions(quizQuestions.size());
-    }
-    public void beginQuiz() {
-        Intent intent = new Intent(this, Quiz.class);
-        intent.putExtra("Subject", selected);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("questions", quizQuestions);
-        intent.putExtras(bundle);
-        intent.putExtra("current", 0);
-        startActivity(intent);
     }
 
-    public void numQuestions(int num) {
-        TextView totalNum = (TextView) findViewById(R.id.textView);
+    public void numQuestions(int num, TextView totalNum) {
         String text = totalNum.getText().toString();
         totalNum.setText(text + " " + num);
+    }
+
+    public void beginQuiz() {
+        ((FragmentQuiz)getActivity()).setQuestionList(this.quizQuestions);
+        Fragment questionFragment = new QuizQuestionFragment();
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.fragmentContainer, questionFragment).commit();
     }
 }

@@ -52,7 +52,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void handleButton(int id) {
-        Intent intent = new Intent(this, subjectOverview.class);
+        Intent intent = new Intent(this, FragmentQuiz.class);
         intent.putExtra("subject", id);
         startActivity(intent);
     }
