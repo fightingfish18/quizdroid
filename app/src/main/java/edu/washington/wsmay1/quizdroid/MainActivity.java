@@ -26,6 +26,8 @@ public class MainActivity extends ActionBarActivity {
         math.setOnClickListener(buttonPush);
         physics.setOnClickListener(buttonPush);
         marvel.setOnClickListener(buttonPush);
+
+        QuizApp myApp = (QuizApp) getApplication();
     }
 
 
