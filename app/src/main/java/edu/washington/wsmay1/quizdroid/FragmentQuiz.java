@@ -18,8 +18,9 @@ import java.util.HashMap;
 
 public class FragmentQuiz extends ActionBarActivity  {
     private ArrayList<Question> quizQuestions;
+    private Topic selectedTopic;
     private String selected;
-    private int activityId;
+    //private int activityId;
     private View.OnClickListener beginQuizListener;
     private int qNum;
     private int totalCorrect;
@@ -33,11 +34,10 @@ public class FragmentQuiz extends ActionBarActivity  {
         QuizApp myApp = (QuizApp) getApplication();
         HashMap<String, Topic> topicMap = myApp.getTopicMap();
         selected = selection.getStringExtra("subject");
-        Topic selectedTopic = topicMap.get(selected);
+        selectedTopic = topicMap.get(selected);
         this.qNum = 0;
         this.totalCorrect = 0;
-        quizQuestions = new ArrayList<Question>();
-        activityId = selection.getIntExtra("subject", 0);
+        //activityId = selection.getIntExtra("subject", 0);
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         Fragment overviewFrag = new subjectOverviewFragment();
@@ -53,8 +53,8 @@ public class FragmentQuiz extends ActionBarActivity  {
         return true;
     }
 
-    public int getActivityId() {
-        return this.activityId;
+    public Topic getSelectedTopic() {
+        return this.selectedTopic;
     }
 
     @Override

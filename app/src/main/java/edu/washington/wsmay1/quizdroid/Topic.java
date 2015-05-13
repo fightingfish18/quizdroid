@@ -22,7 +22,7 @@ public class Topic {
         return this.description;
     }
 
-    public ArrayList<Question> questions() {
+    public ArrayList<Question> getQuestions() {
         return this.questions;
     }
 }

@@ -24,7 +24,8 @@ import java.util.ArrayList;
  */
 public class subjectOverviewFragment extends Fragment {
 
-    private int activityId;
+    //private int activityId;
+    private Topic selectedTopic;
     private OnFragmentInteractionListener mListener;
     private String selected;
     private ArrayList<Question> quizQuestions = new ArrayList<Question>();
@@ -48,11 +49,11 @@ public class subjectOverviewFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        this.activityId = ((FragmentQuiz)getActivity()).getActivityId();
+        this.selectedTopic = ((FragmentQuiz)getActivity()).getSelectedTopic();
         View v = inflater.inflate(R.layout.fragment_subject_overview, container, false);
         Button begin = (Button) v.findViewById(R.id.start);
-        v = populateView(this.activityId, v);
-        createQuiz(selected);
+        v = populateView(v);
+        createQuiz();
         numQuestions(this.quizQuestions.size(), (TextView) v.findViewById(R.id.textView));
         begin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,9 +103,10 @@ public class subjectOverviewFragment extends Fragment {
         public void onFragmentInteraction(Uri uri);
     }
 
-    public View populateView(int activityId, View v) {
+    public View populateView(View v) {
         TextView title = (TextView) v.findViewById(R.id.title);
         TextView overview = (TextView) v.findViewById(R.id.overview);
+        /*
         switch(activityId) {
             case(R.id.math):
                 title.setText("Math Quiz");
@@ -122,12 +124,14 @@ public class subjectOverviewFragment extends Fragment {
                 selected = "Marvel";
                 break;
         }
+        */
+        title.setText(this.selectedTopic.getTitle());
+        overview.setText(this.selectedTopic.getDescription());
         return v;
-        //createQuiz(selected);
     }
 
-    public void createQuiz(String selected) {
-        ArrayList<String> choices = new ArrayList<String>();
+    public void createQuiz() {
+        /*
         if (selected.equals("Math")) {
             choices.add("1");
             choices.add("3");
@@ -185,7 +189,10 @@ public class subjectOverviewFragment extends Fragment {
             quizQuestions.add(two);
             quizQuestions.add(three);
         }
+        */
+        this.quizQuestions = selectedTopic.getQuestions();
     }
+
 
     public void numQuestions(int num, TextView totalNum) {
         String text = totalNum.getText().toString();
