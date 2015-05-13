@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class FragmentQuiz extends ActionBarActivity  {
@@ -28,10 +29,14 @@ public class FragmentQuiz extends ActionBarActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment_quiz);
+        Intent selection = getIntent();
+        QuizApp myApp = (QuizApp) getApplication();
+        HashMap<String, Topic> topicMap = myApp.getTopicMap();
+        selected = selection.getStringExtra("subject");
+        Topic selectedTopic = topicMap.get(selected);
         this.qNum = 0;
         this.totalCorrect = 0;
         quizQuestions = new ArrayList<Question>();
-        Intent selection = getIntent();
         activityId = selection.getIntExtra("subject", 0);
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();

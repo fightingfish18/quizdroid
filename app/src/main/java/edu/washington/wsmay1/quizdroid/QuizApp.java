@@ -27,23 +27,17 @@ public class QuizApp extends android.app.Application implements TopicRepository 
 
         topicMap = new HashMap<String, Topic>();
         String json = null;
-
-        // Fetch data.json in assets/ folder
         try {
             InputStream inputStream = getAssets().open("questions.json");
             json = readJSONFile(inputStream);
             JSONArray data = new JSONArray(json);
             createTopicData(data);
-
-
-
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
         }
         Log.e("quizapp", "this worked");
-
     }
 
     public String readJSONFile(InputStream inputStream) throws IOException {
@@ -64,14 +58,15 @@ public class QuizApp extends android.app.Application implements TopicRepository 
                 JSONArray questionData = topicData.getJSONArray("questions");
                 ArrayList<Question> questions = new ArrayList<Question>();
                 for (int j = 0; j < questionData.length(); j++) {
-                    JSONObject questionInfo = (JSONObject) questionData.get(i);
+                    JSONObject questionInfo = (JSONObject) questionData.get(j);
+                    Log.e("data", questionData.toString());
                     String questionText = questionInfo.getString("text");
                     int answer = questionInfo.getInt("answer");
                     answer--;
                     JSONArray choices = questionInfo.getJSONArray("answers");
                     ArrayList<String> choicesList = new ArrayList<String>();
                     for (int k = 0; k < choices.length(); k++) {
-                        choicesList.add(choices.get(i).toString());
+                        choicesList.add(choices.get(k).toString());
                     }
                     questions.add(new Question(questionText, choicesList, answer));
                 }
@@ -82,5 +77,9 @@ public class QuizApp extends android.app.Application implements TopicRepository 
         catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public HashMap<String, Topic> getTopicMap() {
+        return this.topicMap;
     }
 }
