@@ -83,4 +83,10 @@ public class MainActivity extends ActionBarActivity {
         intent.putExtra("subject", title);
         startActivity(intent);
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        myApp.stop();
+    }
 }

@@ -30,22 +30,21 @@ public class DownloadService extends Service {
 
     @Override
     public void onCreate() {
-        /*if (downloadTimer != null) {
+        if (downloadTimer != null) {
             downloadTimer.cancel();
         } else {
             downloadTimer = new Timer();
             checkPreferences();
-            downloadTimer.scheduleAtFixedRate(new DownloadTask(), 0, interval * 1000);
-        }*/
-        if (downloadService != null) {
-            downloadService.shutdown();
-        } else {
-            downloadService = Executors.newScheduledThreadPool(2);
-            checkPreferences();
-            if (downloadService.isShutdown()) {
-                downloadService.scheduleAtFixedRate(makeRunnable(), 0, interval, TimeUnit.SECONDS);
-            }
+            downloadTimer.scheduleAtFixedRate(new DownloadTask(), 0, interval * 60000);
         }
+
+    }
+
+    @Override
+    public void onDestroy() {
+        Toast.makeText(this, "Preferences Changed", Toast.LENGTH_SHORT).show();
+        super.onDestroy();
+        downloadTimer.cancel();
     }
 
     public void checkPreferences() {
@@ -53,33 +52,12 @@ public class DownloadService extends Service {
         Log.e("prefs", mySharedPreferences.toString());
         String url = mySharedPreferences.getString("urlPref", "blank");
         int duration = Integer.parseInt(mySharedPreferences.getString("delayPref", "5"));
-        boolean changed = false;
-        if (!url.equals(source)) {
-            source = url;
-            changed = true;
-        }
-        if (duration != interval) {
-            interval = duration;
-            changed = true;
-        }
-        if (changed) {
-            downloadService.shutdown();
-            downloadService.scheduleAtFixedRate(makeRunnable(), 0, interval, TimeUnit.SECONDS);
-        }
+        source = url;
+        interval = duration;
     }
 
-    private Runnable makeRunnable() {
-        return new Runnable() {
-            @Override
-            public void run() {
-                checkPreferences();
-                Toast.makeText(getApplicationContext(), source, Toast.LENGTH_SHORT).show();
-            }
-        };
-    }
 
-    /*
-    class DownloadTask {
+    class DownloadTask extends TimerTask {
         @Override
         public void run() {
             downloadHandler.post(new Runnable() {
@@ -90,5 +68,5 @@ public class DownloadService extends Service {
                 }
             });
         }
-    } */
+    }
 }

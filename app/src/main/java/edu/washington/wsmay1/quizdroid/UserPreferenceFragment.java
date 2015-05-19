@@ -21,15 +21,13 @@ public class UserPreferenceFragment extends PreferenceFragment {
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
         SharedPreferences.OnSharedPreferenceChangeListener spChanged = new
-                SharedPreferences.OnSharedPreferenceChangeListener() {
-                    @Override
-                    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                        if (key.equals("urlPref")) {
-                            ((SetPreferencesActivity) getActivity()).getApp().setDownloadUrl(sharedPreferences.getString(key, "blank"));
-                        } else {
-                            ((SetPreferencesActivity) getActivity()).getApp().setDownloadInterval(sharedPreferences.getInt(key, 5));
-                        }
-                    }
-                };
+            SharedPreferences.OnSharedPreferenceChangeListener() {
+                @Override
+                public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                    ((SetPreferencesActivity) getActivity()).getApp().stop();
+                    ((SetPreferencesActivity) getActivity()).getApp().start();
+                }
+            };
+        getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(spChanged);
     }
 }

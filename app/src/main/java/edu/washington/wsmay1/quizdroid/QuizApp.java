@@ -14,6 +14,7 @@ public class QuizApp extends android.app.Application implements TopicRepository 
     private static QuizApp instance = null;
     private int downloadInterval;
     private String downloadUrl;
+    private Intent downloadServiceIntent;
 
 
     public QuizApp() {
@@ -49,7 +50,15 @@ public class QuizApp extends android.app.Application implements TopicRepository 
         int duration = Integer.parseInt(mySharedPreferences.getString("delayPref", "5"));
         downloadInterval = duration;
         downloadUrl = url;
-        Intent downloadServiceIntent = new Intent(this, DownloadService.class);
+        downloadServiceIntent = new Intent(this, DownloadService.class);
+        start();
+    }
+
+    public void stop() {
+        stopService(downloadServiceIntent);
+    }
+
+    public void start() {
         startService(downloadServiceIntent);
     }
 
@@ -92,6 +101,7 @@ public class QuizApp extends android.app.Application implements TopicRepository 
         }
     }
 
+
     public int getDownloadInterval() {
         return downloadInterval;
     }
@@ -108,6 +118,9 @@ public class QuizApp extends android.app.Application implements TopicRepository 
         downloadUrl = url;
     }
 
+    private Intent getDownloadServiceIntent() {
+        return downloadServiceIntent;
+    }
 
     public HashMap<String, Topic> getTopicMap() {
         return this.topicMap;

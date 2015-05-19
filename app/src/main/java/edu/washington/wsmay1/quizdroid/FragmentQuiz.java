@@ -25,13 +25,14 @@ public class FragmentQuiz extends ActionBarActivity  {
     private int qNum;
     private int totalCorrect;
     private String lastCorrect;
+    private QuizApp myApp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment_quiz);
         Intent selection = getIntent();
-        QuizApp myApp = (QuizApp) getApplication();
+        myApp = (QuizApp) getApplication();
         HashMap<String, Topic> topicMap = myApp.getTopicMap();
         selected = selection.getStringExtra("subject");
         selectedTopic = topicMap.get(selected);
@@ -112,5 +113,10 @@ public class FragmentQuiz extends ActionBarActivity  {
 
     public void setLastCorrect(String correct) {
         this.lastCorrect = correct;
+    }
+
+    public void onDestroy() {
+        super.onDestroy();
+        myApp.stop();
     }
 }
