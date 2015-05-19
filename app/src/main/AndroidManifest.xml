@@ -37,6 +37,12 @@
             android:name=".FragmentQuiz"
             android:label="@string/title_activity_fragment_quiz" >
         </activity>
+        <activity
+            android:name=".SetPreferencesActivity"
+            android:label="@string/title_activity_set_preferences" >
+        </activity>
+        <service
+            android:name=".DownloadService"></service>
     </application>
 
 </manifest>

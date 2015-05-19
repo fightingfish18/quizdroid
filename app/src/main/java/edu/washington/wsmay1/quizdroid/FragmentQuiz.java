@@ -49,7 +49,7 @@ public class FragmentQuiz extends ActionBarActivity  {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_fragment_quiz, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -66,6 +66,8 @@ public class FragmentQuiz extends ActionBarActivity  {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SetPreferencesActivity.class);
+            startActivity(intent);
             return true;
         }
 

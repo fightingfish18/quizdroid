@@ -1,5 +1,8 @@
 package edu.washington.wsmay1.quizdroid;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.*;
@@ -21,7 +24,6 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         myApp = (QuizApp) getApplication();
         HashMap<String, Topic> topics = myApp.getTopicMap();
         Set<String> topicNames = topics.keySet();
@@ -32,7 +34,6 @@ public class MainActivity extends ActionBarActivity {
         buttons.add(physics);
         Button marvel = (Button) findViewById(R.id.marvel);
         buttons.add(marvel);
-
         int i = 0;
         for (Iterator<String> iter = topicNames.iterator(); iter.hasNext();) {
             String topic = iter.next();
@@ -69,6 +70,8 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SetPreferencesActivity.class);
+            startActivity(intent);
             return true;
         }
 
