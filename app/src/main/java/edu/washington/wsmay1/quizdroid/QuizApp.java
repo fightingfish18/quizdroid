@@ -4,9 +4,16 @@ import org.json.*;
 import java.util.*;
 import java.io.*;
 
+import android.app.AlertDialog;
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.util.Log;
 
 public class QuizApp extends android.app.Application implements TopicRepository {
@@ -15,6 +22,8 @@ public class QuizApp extends android.app.Application implements TopicRepository 
     private int downloadInterval;
     private String downloadUrl;
     private Intent downloadServiceIntent;
+    private DownloadManager dmManager;
+    private boolean initialized = false;
 
 
     public QuizApp() {
@@ -31,22 +40,9 @@ public class QuizApp extends android.app.Application implements TopicRepository 
     @Override
     public void onCreate() {
         super.onCreate();
-
-        topicMap = new HashMap<String, Topic>();
-        String json = null;
-        try {
-            InputStream inputStream = getAssets().open("questions.json");
-            json = readJSONFile(inputStream);
-            JSONArray data = new JSONArray(json);
-            createTopicData(data);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        dmManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
         SharedPreferences mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        Log.e("prefs", mySharedPreferences.toString());
-        String url = mySharedPreferences.getString("urlPref", "blank");
+        String url = mySharedPreferences.getString("urlPref", "http://tednewardsandbox.site44.com/questions.json");
         int duration = Integer.parseInt(mySharedPreferences.getString("delayPref", "5"));
         downloadInterval = duration;
         downloadUrl = url;
@@ -72,8 +68,8 @@ public class QuizApp extends android.app.Application implements TopicRepository 
 
     public void createTopicData(JSONArray data) {
         try {
+            topicMap = new HashMap<String, Topic>();
             for (int i = 0; i < data.length(); i++) {
-                Log.e("json", data.get(i).toString());
                 JSONObject topicData = (JSONObject) data.get(i);
                 String title = topicData.getString("title");
                 String description = topicData.getString("desc");
@@ -81,7 +77,6 @@ public class QuizApp extends android.app.Application implements TopicRepository 
                 ArrayList<Question> questions = new ArrayList<Question>();
                 for (int j = 0; j < questionData.length(); j++) {
                     JSONObject questionInfo = (JSONObject) questionData.get(j);
-                    Log.e("data", questionData.toString());
                     String questionText = questionInfo.getString("text");
                     int answer = questionInfo.getInt("answer");
                     answer--;
@@ -95,12 +90,42 @@ public class QuizApp extends android.app.Application implements TopicRepository 
                 Topic topic = new Topic(title, description, questions);
                 topicMap.put(title, topic);
             }
+            initialized = true;
         }
         catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
+    public JSONArray createJSON() {
+        String json = null;
+        try {
+            File myFile = new File(getFilesDir().getAbsolutePath(), "/data.json");
+            FileInputStream inputStream = new FileInputStream(myFile);
+            //InputStream inputStream = getAssets().open("questions.json");
+            json = readJSONFile(inputStream);
+            JSONArray data = new JSONArray(json);
+            return data;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void writeToFile(String data) {
+        try {
+            File file = new File(getFilesDir().getAbsolutePath(), "/data.json");
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(data.getBytes());
+            fos.close();
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
+    }
 
     public int getDownloadInterval() {
         return downloadInterval;
@@ -124,5 +149,9 @@ public class QuizApp extends android.app.Application implements TopicRepository 
 
     public HashMap<String, Topic> getTopicMap() {
         return this.topicMap;
+    }
+
+    public boolean getInitialized() {
+        return this.initialized;
     }
 }

@@ -8,7 +8,7 @@
         <EditTextPreference
             android:key="urlPref"
             android:title="URL"
-            android:defaultValue="blank"
+            android:defaultValue="http://tednewardsandbox.site44.com/questions.json"
             android:summary="Download URL"
             android:dialogTitle="Enter desired URL"/>
 

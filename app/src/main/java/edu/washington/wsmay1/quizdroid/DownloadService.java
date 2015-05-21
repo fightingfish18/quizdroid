@@ -1,21 +1,22 @@
 package edu.washington.wsmay1.quizdroid;
 
 
+import android.app.DownloadManager;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.util.Log;
+import android.provider.Settings;
 import android.widget.Toast;
-
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+
 
 public class DownloadService extends Service {
     private static int interval;
@@ -23,6 +24,11 @@ public class DownloadService extends Service {
     private Timer downloadTimer = null;
     private ScheduledExecutorService downloadService = null;
     private Handler downloadHandler = new Handler();
+    private DownloadManager dmManager;
+    private long enqueue;
+    boolean isAir;
+    private MyContextWrapper wrapper;
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -34,26 +40,27 @@ public class DownloadService extends Service {
             downloadTimer.cancel();
         } else {
             downloadTimer = new Timer();
+            dmManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
             checkPreferences();
-            downloadTimer.scheduleAtFixedRate(new DownloadTask(), 0, interval * 60000);
+            downloadTimer.scheduleAtFixedRate(new DownloadTask(), 0, interval * 6000);
         }
 
     }
 
     @Override
     public void onDestroy() {
-        Toast.makeText(this, "Preferences Changed", Toast.LENGTH_SHORT).show();
         super.onDestroy();
         downloadTimer.cancel();
     }
 
     public void checkPreferences() {
         SharedPreferences mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        Log.e("prefs", mySharedPreferences.toString());
         String url = mySharedPreferences.getString("urlPref", "blank");
         int duration = Integer.parseInt(mySharedPreferences.getString("delayPref", "5"));
         source = url;
         interval = duration;
+        wrapper = new MyContextWrapper(this);
+        isAir = wrapper.isAirplaneModeOn();
     }
 
 
@@ -64,7 +71,14 @@ public class DownloadService extends Service {
                 @Override
                 public void run() {
                     checkPreferences();
-                    Toast.makeText(getApplicationContext(), source, Toast.LENGTH_SHORT).show();
+                    try {
+                        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(source));
+                        enqueue = dmManager.enqueue(request);
+                        Toast.makeText(getApplicationContext(), source, Toast.LENGTH_SHORT).show();
+                    } catch (IllegalArgumentException e) {
+                        downloadTimer.cancel();
+                        Toast.makeText(getApplicationContext(), "Illegaly formed URL... please enter another", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         }

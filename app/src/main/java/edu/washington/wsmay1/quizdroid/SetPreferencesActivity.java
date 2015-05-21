@@ -47,12 +47,6 @@ public class SetPreferencesActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        QuizApp myApp = (QuizApp) getApplication();
-        myApp.stop();
-    }
 
     public QuizApp getApp() {
         return myApp;
