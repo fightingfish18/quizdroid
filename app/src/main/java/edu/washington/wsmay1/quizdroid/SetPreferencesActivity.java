@@ -24,6 +24,16 @@ public class SetPreferencesActivity extends ActionBarActivity {
         transaction.commit();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        FragmentManager manager = getFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        Fragment prefFrag = new UserPreferenceFragment();
+        transaction.add(R.id.prefContainer, prefFrag);
+        transaction.commit();
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

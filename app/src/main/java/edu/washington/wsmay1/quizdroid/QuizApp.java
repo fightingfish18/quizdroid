@@ -4,6 +4,7 @@ import org.json.*;
 import java.util.*;
 import java.io.*;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
@@ -15,6 +16,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.Toast;
 
 public class QuizApp extends android.app.Application implements TopicRepository {
     private HashMap<String, Topic> topicMap;
@@ -154,4 +156,5 @@ public class QuizApp extends android.app.Application implements TopicRepository 
     public boolean getInitialized() {
         return this.initialized;
     }
+
 }

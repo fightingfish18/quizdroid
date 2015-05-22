@@ -43,9 +43,14 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         myApp = (QuizApp) getApplication();
-        if (new MyContextWrapper(MainActivity.this).isAirplaneModeOn()) {
-            myApp.stop();
-            createDialog();
+        Intent intent = getIntent();
+        if (intent != null) {
+            if (intent.getStringExtra("airplane") != null) {
+                if (intent.getStringExtra("airplane").equals("true")) {
+                    myApp.stop();
+                    createDialog();
+                }
+            }
         }
         dmManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
         IntentFilter filter = new IntentFilter();
@@ -196,9 +201,10 @@ public class MainActivity extends ActionBarActivity {
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intent i = new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS);
-                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(i);
+                        startActivityForResult(new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS), 0);
+                        //Intent i = new Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS);
+                        //i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        //startActivity(i);
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {

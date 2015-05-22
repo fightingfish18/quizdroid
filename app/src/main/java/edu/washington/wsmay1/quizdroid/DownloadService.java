@@ -42,7 +42,7 @@ public class DownloadService extends Service {
             downloadTimer = new Timer();
             dmManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
             checkPreferences();
-            downloadTimer.scheduleAtFixedRate(new DownloadTask(), 0, interval * 6000);
+            downloadTimer.scheduleAtFixedRate(new DownloadTask(), 0, interval * 60000);
         }
 
     }
@@ -60,7 +60,7 @@ public class DownloadService extends Service {
         source = url;
         interval = duration;
         wrapper = new MyContextWrapper(this);
-        isAir = wrapper.isAirplaneModeOn();
+        isAir = wrapper.isConnected();
     }
 
 
@@ -71,13 +71,25 @@ public class DownloadService extends Service {
                 @Override
                 public void run() {
                     checkPreferences();
-                    try {
-                        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(source));
-                        enqueue = dmManager.enqueue(request);
-                        Toast.makeText(getApplicationContext(), source, Toast.LENGTH_SHORT).show();
-                    } catch (IllegalArgumentException e) {
+                    if (isAir) {
+                        try {
+                            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(source));
+                            enqueue = dmManager.enqueue(request);
+                            Toast.makeText(getApplicationContext(), source, Toast.LENGTH_SHORT).show();
+                        } catch (IllegalArgumentException e) {
+                            downloadTimer.cancel();
+                            Toast.makeText(getApplicationContext(), "Illegaly formed URL... please enter another", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(), "You are not connected to a network.  Using stored data.", Toast.LENGTH_SHORT).show();
                         downloadTimer.cancel();
-                        Toast.makeText(getApplicationContext(), "Illegaly formed URL... please enter another", Toast.LENGTH_SHORT).show();
+                        if (wrapper.isAirplaneModeOn()) {
+                            Intent intent = new Intent(wrapper, MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.putExtra("airplane", "true");
+                            startActivity(intent);
+                        }
+
                     }
                 }
             });
